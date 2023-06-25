@@ -10,7 +10,7 @@ namespace Gobang.Pages
 
         private bool IsInGame = false;
 
-        private string msgs;
+        private string? msgs;
 
         private int AIChess = 1;
 
@@ -34,7 +34,7 @@ namespace Gobang.Pages
                     AIChess = 1;
                     MineChess = 2;
 
-                    // 电脑落子正中心天元位置
+                    //电脑落子正中心天元位置
                     Chess[9, 9] = AIChess;
 
                     msgs = "电脑：执黑子 ⚫ 我：执白子 ⚪";
