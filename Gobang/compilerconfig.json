@@ -2,5 +2,9 @@
   {
     "outputFile": "Pages/ChatRoom.razor.css",
     "inputFile": "Pages/ChatRoom.razor.scss"
+  },
+  {
+    "outputFile": "Pages/Gobang.razor.css",
+    "inputFile": "Pages/Gobang.razor.scss"
   }
 ]
