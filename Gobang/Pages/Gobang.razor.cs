@@ -1,4 +1,5 @@
-﻿using Microsoft.JSInterop;
+﻿using Gobang.Model;
+using Microsoft.JSInterop;
 
 namespace Gobang.Pages
 {
