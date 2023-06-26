@@ -13,7 +13,7 @@ namespace Gobang
             builder.Services.AddRazorPages();
             builder.Services.AddServerSideBlazor();
 
-            builder.WebHost.UseUrls(new[] { "http://*:5005" });
+            builder.WebHost.UseUrls("http://*:5005");
 
             var app = builder.Build();
 
