@@ -1,3 +1,4 @@
+using Gobang.GameHub;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 
@@ -30,6 +31,7 @@ namespace Gobang
             app.MapBlazorHub();
             app.MapFallbackToPage("/_Host");
             app.MapHub<BlazorChatSampleHub>(BlazorChatSampleHub.HubUrl);
+            app.MapHub<GoBangHub>(GoBangHub.HubUrl);
 
             app.Run();
         }

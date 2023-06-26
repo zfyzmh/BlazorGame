@@ -47,6 +47,7 @@ namespace Gobang.Pages
 
                 _hubConnection = new HubConnectionBuilder()
                     .WithUrl(_hubUrl)
+                    .ConfigureLogging(logging => logging.AddConsole())
                     .Build();
 
                 _hubConnection.On<string, string>("Broadcast", BroadcastMessage);

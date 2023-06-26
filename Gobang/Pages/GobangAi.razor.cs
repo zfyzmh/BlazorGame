@@ -1,14 +1,10 @@
-﻿using Gobang.GameHub;
-using Gobang.Model;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.SignalR.Client;
+﻿using Gobang.Model;
 using Microsoft.JSInterop;
 
 namespace Gobang.Pages
 {
-    public partial class Gobang
+    public partial class GobangAi
     {
-        [Inject] private NavigationManager? NavigationManager { get; set; }
         private int[,] Chess = new int[19, 19];
 
         private string first = "ai";
@@ -21,30 +17,10 @@ namespace Gobang.Pages
 
         private int MineChess = 2;
 
-        private string? _hubUrl;
-        private HubConnection? _hubConnection;
-
-        private async Task StartGame()
+        private void StartGame()
         {
             // 初始化棋盘
             Chess = new int[19, 19];
-            try
-            {
-                string baseUrl = NavigationManager!.BaseUri;
-
-                _hubUrl = baseUrl.TrimEnd('/') + GoBangHub.HubUrl;
-
-                _hubConnection = new HubConnectionBuilder()
-                    .WithUrl(_hubUrl)
-                    .ConfigureLogging(logging => logging.AddConsole())
-                    .Build();
-
-                await _hubConnection.StartAsync();
-            }
-            catch (Exception e)
-            {
-                msgs = e.Message;
-            }
 
             // 是否开始游戏，点击按钮重置显示消息
             if (IsInGame)
