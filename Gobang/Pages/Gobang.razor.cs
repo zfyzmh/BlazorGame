@@ -82,8 +82,12 @@ namespace Gobang.Pages
 
         private async Task CreateRoom()
         {
-            IsInRoom = true;
             var roomname = await JS.InvokeAsync<string>("prompt", "请输入房间名称!", "房间" + Guid.NewGuid());
+
+            if (string.IsNullOrEmpty(roomname)) return;
+
+            IsInRoom = true;
+
             MineChess = 1;
             if (string.IsNullOrEmpty(roomname)) return;
             await _hubConnection!.SendAsync("CreateRoom", roomname, "");
@@ -92,9 +96,11 @@ namespace Gobang.Pages
 
         private async Task GetIntoRoom()
         {
+            var roomname = await JS.InvokeAsync<string>("prompt", "请输入房间名称!");
+            if (string.IsNullOrEmpty(roomname)) return;
+
             IsInRoom = true;
             IsInGame = true;
-            var roomname = await JS.InvokeAsync<string>("prompt", "请输入房间名称!");
             await _hubConnection!.SendAsync("GetIntoRoom", roomname, "");
             MineChess = 2;
             Room = new GoBangRoom() { RoomName = roomname };
