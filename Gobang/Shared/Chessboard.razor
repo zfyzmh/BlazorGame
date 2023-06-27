@@ -1,0 +1,27 @@
+﻿<div class="chess">
+    @for (var i = 0; i < 19; i++)
+    {
+        @for (var j = 0; j < 19; j++)
+        {
+            var _i = i;
+            var _j = j;
+            <div class="cell" @onclick="@(async () => await Playing(_i, _j))">
+                <span class="chess@(Chess[i, j])"></span>
+            </div>
+        }
+    }
+</div>
+
+@code {
+    [Parameter] public int[,] Chess { get; set; }
+    [Parameter]
+    public EventCallback<(int, int)> OnPlaying { get; set; }
+
+    private async Task Playing(int row, int cell)
+    {
+        if (OnPlaying.HasDelegate)
+        {
+            await OnPlaying.InvokeAsync((row, cell));
+        }
+    }
+}

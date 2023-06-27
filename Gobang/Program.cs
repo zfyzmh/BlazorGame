@@ -11,6 +11,9 @@ namespace Gobang
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+
+            builder.Services.AddSignalR()
+                .AddNewtonsoftJsonProtocol();
             builder.Services.AddRazorPages();
             builder.Services.AddServerSideBlazor();
 

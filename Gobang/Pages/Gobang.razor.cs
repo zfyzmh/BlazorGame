@@ -9,7 +9,11 @@ namespace Gobang.Pages
     public partial class Gobang : IDisposable
     {
         [Inject] private NavigationManager? NavigationManager { get; set; }
-        private int[,] Chess = new int[19, 19];
+
+        [Parameter]
+        public string RoomName { get; set; }
+
+        private int[,] Chess { get; set; } = new int[19, 19];
 
         private string first = "He";
 
@@ -19,15 +23,11 @@ namespace Gobang.Pages
 
         private bool IsReady = false;
 
-        
-
         private GoBangRoom? Room { get; set; }
 
         private string msgs;
 
-        private int AIChess = 1;
-
-        private int MineChess = 2;
+        private int MineChess = 1;
 
         private string? _hubUrl;
         private HubConnection? _hubConnection;
@@ -43,25 +43,53 @@ namespace Gobang.Pages
                 _hubConnection = new HubConnectionBuilder()
                     .WithUrl(_hubUrl)
                     .ConfigureLogging(logging => logging.AddConsole())
+                    .AddNewtonsoftJsonProtocol()
                     .Build();
+
+                _hubConnection.On<int[,]>("SynchronizeCheckerboard", SynchronizeCheckerboard);
+                _hubConnection.On<string>("Alert", Alert);
                 await _hubConnection.StartAsync();
             }
 
             await base.OnInitializedAsync();
         }
 
+        private async Task Alert(string msg)
+        {
+            await JS.InvokeAsync<string>("alert", msg);
 
-        private async Task CreateRoom() {
-            IsInRoom = true;
+            if (msg == "\n你个渣渣👎")
+            {
+                IsInGame = false;
+                Chess = new int[19, 19];
+            }
         }
+
+        private async Task CreateRoom()
+        {
+            IsInRoom = true;
+            var roomname = await JS.InvokeAsync<string>("prompt", "请输入房间名称!");
+            MineChess = 1;
+            if (string.IsNullOrEmpty(roomname)) return;
+            await _hubConnection!.SendAsync("CreateRoom", roomname, "");
+            Room = new GoBangRoom() { RoomName = roomname };
+        }
+
         private async Task GetIntoRoom()
         {
             IsInRoom = true;
+            var roomname = await JS.InvokeAsync<string>("prompt", "请输入房间名称!");
+            await _hubConnection!.SendAsync("GetIntoRoom", roomname, "");
+            MineChess = 2;
+            Room = new GoBangRoom() { RoomName = roomname };
         }
+
         private async Task Invite()
         {
-            
+            await JS.InvokeVoidAsync("clipboardCopy.copyText", NavigationManager.BaseUri + Room!.RoomName);
+            await JS.InvokeAsync<Task>("alert", "🚀已复制链接到剪切板,快去邀请你的朋友吧🚀");
         }
+
         private async Task StartGame()
         {
             // 初始化棋盘
@@ -74,13 +102,6 @@ namespace Gobang.Pages
             }
             else
             {
-                if (Room == null)
-                {
-                    var roomname = await JS.InvokeAsync<string>("prompt", "请输入房间名称!");
-
-                    if (string.IsNullOrEmpty(roomname)) return;
-                }
-
                 msgs = "由房主选择谁执黑先行!";
             }
 
@@ -88,9 +109,10 @@ namespace Gobang.Pages
             IsInGame = !IsInGame;
         }
 
-        private async Task Playing(int row, int cell)
+        private async Task Playing((int, int) value)
         {
-            // 是否开始游戏，当前判断没开始给出提示
+            (int row, int cell) = value;
+            //是否开始游戏，当前判断没开始给出提示
             if (!IsInGame)
             {
                 await JS.InvokeAsync<Task>("alert", "\n💪点击开始游戏按钮开启对局，请阅读游戏规则💪");
@@ -109,10 +131,19 @@ namespace Gobang.Pages
                 await JS.InvokeAsync<Task>("alert", "\n恭喜，你赢了👍");
 
                 IsInGame = !IsInGame;
+                await _hubConnection!.SendAsync("Win", Room);
                 return;
             }
 
-            // 我方落子之后对方落子
+            // 我方落子之后通知对方落子
+            await _hubConnection!.SendAsync("Playing", Room, Chess);
+            StateHasChanged();
+        }
+
+        private void SynchronizeCheckerboard(int[,] chess)
+        {
+            Chess = chess;
+            InvokeAsync(StateHasChanged);
         }
 
         private bool IsWin(int chess, int row, int cell)

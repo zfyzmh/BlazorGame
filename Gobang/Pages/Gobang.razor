@@ -1,22 +1,10 @@
-﻿@page "/gobang"
-@page "/"
+﻿@page "/"
+@page "/{RoomName}"
 
 @inject IJSRuntime JS
 
 <div class="gobang-box">
-    <div class="chess">
-        @for (var i = 0; i < 19; i++)
-        {
-            @for (var j = 0; j < 19; j++)
-            {
-                var _i = i;
-                var _j = j;
-                <div class="cell" @onclick="@(async () => await Playing(_i, _j))">
-                    <span class="chess@(Chess[i, j])"></span>
-                </div>
-            }
-        }
-    </div>
+    <Gobang.Shared.Chessboard Chess="Chess" OnPlaying="Playing"></Gobang.Shared.Chessboard>
 </div>
 <div class="chess-info">
     <h1>五子棋⚫⚪</h1>
@@ -27,11 +15,15 @@
     {
         <p><button class="box-btn" @onclick="CreateRoom">创建房间</button></p>
         <p><button class="box-btn" @onclick="GetIntoRoom">加入房间</button></p>
-    }else{
+    }
+    else
+    {
+        <p><button class="box-btn" @onclick="StartGame">@(IsInGame ? "认输" : "开始游戏")</button></p>
         if (IsReady)
         {
             <p><button class="box-btn" @onclick="StartGame">@(IsInGame ? "认输" : "开始游戏")</button></p>
-        }else
+        }
+        else
         {
             <p><button class="box-btn" @onclick="Invite">邀请朋友</button></p>
         }

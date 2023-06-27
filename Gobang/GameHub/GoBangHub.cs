@@ -8,7 +8,7 @@ namespace Gobang.GameHub
     {
         public const string HubUrl = "/gobang";
 
-        private readonly List<GoBangRoom> goBangRooms = new();
+        private static readonly List<GoBangRoom> goBangRooms = new();
 
         public override Task OnConnectedAsync()
         {
@@ -71,10 +71,10 @@ namespace Gobang.GameHub
         /// <param name="cell">列</param>
         /// <param name="blackOrWhite">1为黑子,2为白子,黑子先行</param>
         /// <returns></returns>
-        public async Task Playing(GoBangRoom room, int[,] Chess, int row, int cell, int blackOrWhite)
+        public async Task Playing(GoBangRoom room, int[,] Chess)
         {
-            goBangRooms.First(m => m.Guid == room.Guid).Chess = Chess;
-            await Clients.OthersInGroup(room.RoomName).SendAsync("Playing", row, cell, blackOrWhite);
+            goBangRooms.First(m => m.RoomName == room.RoomName).Chess = Chess;
+            await Clients.OthersInGroup(room.RoomName).SendAsync("SynchronizeCheckerboard", Chess);
         }
 
         public async Task Win(GoBangRoom room)
