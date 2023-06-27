@@ -38,16 +38,9 @@
 </html>
 <script>
 
-    window.clipboardCopy = {
-        copyText: function (text) {
-            navigator.clipboard.writeText(text).then(function () {
-
-            })
-                .catch(function (error) {
-                    alert(error);
-                });
-        }
-    };
+    function copyToClipboard(text) {
+        navigator.clipboard.writeText(text);
+    }
 
 </script>
 <script src="_content/MudBlazor/MudBlazor.min.js"></script>

@@ -25,8 +25,6 @@ namespace Gobang.Pages
 
         private bool IsInRoom = false;
 
-        private bool IsReady = false;
-
         private GoBangRoom? Room { get; set; }
 
         private string msgs;
@@ -63,6 +61,7 @@ namespace Gobang.Pages
             if (!string.IsNullOrEmpty(RoomName))
             {
                 IsInRoom = true;
+                IsInGame = true;
                 MineChess = 2;
                 Room = new GoBangRoom() { RoomName = RoomName };
                 await _hubConnection!.SendAsync("GetIntoRoom", RoomName, "");
@@ -84,7 +83,7 @@ namespace Gobang.Pages
         private async Task CreateRoom()
         {
             IsInRoom = true;
-            var roomname = await JS.InvokeAsync<string>("prompt", "请输入房间名称!");
+            var roomname = await JS.InvokeAsync<string>("prompt", "请输入房间名称!", "房间" + Guid.NewGuid());
             MineChess = 1;
             if (string.IsNullOrEmpty(roomname)) return;
             await _hubConnection!.SendAsync("CreateRoom", roomname, "");
@@ -94,6 +93,7 @@ namespace Gobang.Pages
         private async Task GetIntoRoom()
         {
             IsInRoom = true;
+            IsInGame = true;
             var roomname = await JS.InvokeAsync<string>("prompt", "请输入房间名称!");
             await _hubConnection!.SendAsync("GetIntoRoom", roomname, "");
             MineChess = 2;
@@ -102,9 +102,8 @@ namespace Gobang.Pages
 
         private async Task Invite()
         {
-            await JS.InvokeVoidAsync("clipboardCopy.copyText", NavigationManager.BaseUri + Room!.RoomName);
-
             Snackbar.Add("复制链接成功,快去邀请你的朋友吧!🚀");
+            await JS.InvokeVoidAsync("copyToClipboard", NavigationManager.BaseUri + Room!.RoomName);
         }
 
         private async Task StartGame()
@@ -112,27 +111,38 @@ namespace Gobang.Pages
             // 初始化棋盘
             Chess = new int[19, 19];
 
-            // 是否开始游戏，点击按钮重置显示消息
-            if (IsInGame)
-            {
-                msgs = string.Empty;
-            }
-            else
-            {
-                msgs = "由房主选择谁执黑先行!";
-            }
-
-            // 改变游戏状态，用于显示不同文字的按钮
-            IsInGame = !IsInGame;
+            IsInGame = true;
+            await _hubConnection!.SendAsync("Playing", Room, Chess);
         }
 
         private async Task Playing((int, int) value)
         {
             (int row, int cell) = value;
+
+            var numEqual = Chess.OfType<int>().Count(x => x == 1) == Chess.OfType<int>().Count(x => x == 2);
+
+            if (MineChess == 1)
+            {
+                if (!numEqual)
+                {
+                    Snackbar.Add("对方落子时间!🚀");
+                    return;
+                }
+            }
+            else
+            {
+                if (numEqual)
+                {
+                    Snackbar.Add("对方落子时间!🚀");
+                    return;
+                }
+            }
+
             //是否开始游戏，当前判断没开始给出提示
             if (!IsInGame)
             {
-                await JS.InvokeAsync<Task>("alert", "\n💪点击开始游戏按钮开启对局，请阅读游戏规则💪");
+                Snackbar.Add("\n💪点击开始游戏按钮开启对局，请阅读游戏规则💪");
+
                 return;
             }
 
@@ -149,7 +159,6 @@ namespace Gobang.Pages
 
                 IsInGame = !IsInGame;
                 await _hubConnection!.SendAsync("Win", Room);
-                return;
             }
 
             // 我方落子之后通知对方落子
