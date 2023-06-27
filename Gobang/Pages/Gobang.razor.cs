@@ -3,12 +3,16 @@ using Gobang.Model;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.JSInterop;
+using MudBlazor;
 
 namespace Gobang.Pages
 {
     public partial class Gobang : IDisposable
     {
         [Inject] private NavigationManager? NavigationManager { get; set; }
+
+        [Inject]
+        private ISnackbar Snackbar { get; set; }
 
         [Parameter]
         public string RoomName { get; set; }
@@ -54,6 +58,18 @@ namespace Gobang.Pages
             await base.OnInitializedAsync();
         }
 
+        protected override async Task OnParametersSetAsync()
+        {
+            if (!string.IsNullOrEmpty(RoomName))
+            {
+                IsInRoom = true;
+                MineChess = 2;
+                Room = new GoBangRoom() { RoomName = RoomName };
+                await _hubConnection!.SendAsync("GetIntoRoom", RoomName, "");
+            }
+            await base.OnParametersSetAsync();
+        }
+
         private async Task Alert(string msg)
         {
             await JS.InvokeAsync<string>("alert", msg);
@@ -87,7 +103,8 @@ namespace Gobang.Pages
         private async Task Invite()
         {
             await JS.InvokeVoidAsync("clipboardCopy.copyText", NavigationManager.BaseUri + Room!.RoomName);
-            await JS.InvokeAsync<Task>("alert", "🚀已复制链接到剪切板,快去邀请你的朋友吧🚀");
+
+            Snackbar.Add("复制链接成功,快去邀请你的朋友吧!🚀");
         }
 
         private async Task StartGame()

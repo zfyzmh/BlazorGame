@@ -1,6 +1,7 @@
 using Gobang.GameHub;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Services;
 
 namespace Gobang
 {
@@ -17,6 +18,7 @@ namespace Gobang
             builder.Services.AddRazorPages();
             builder.Services.AddServerSideBlazor();
 
+            builder.Services.AddMudServices();
             builder.WebHost.UseUrls("http://*:5005");
 
             var app = builder.Build();
