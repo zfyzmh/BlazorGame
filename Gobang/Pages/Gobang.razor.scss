@@ -1,83 +1,161 @@
+
 .gobang-box {
-    width: 1200px;
-    margin: 0 auto;
+    display:flex;
+    margin: auto auto;
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
 }
 
-.chess {
-    width: 760px;
-    height: 760px;
-    float: left;
-}
-
-.chess .cell {
-    float: left;
-    width: 40px;
-    height: 40px;
+@mixin cell-style {
     position: relative;
     cursor: pointer;
     font-size: 10px;
     color: #ffd800;
+
+    &::after {
+        content: ' ';
+        position: absolute;
+        height: 2px;
+        display: block;
+        width: 100%;
+        border-bottom: #f5d099 1px solid;
+        background: #c8a06f;
+        z-index: 2;
+    }
+
+    &::before {
+        content: ' ';
+        position: absolute;
+        height: 100%;
+        display: block;
+        width: 2px;
+        border-right: #f5d099 1px solid;
+        background: #c8a06f;
+        z-index: 1;
+    }
 }
 
-.chess .cell::after {
-    content: ' ';
-    position: absolute;
-    height: 2px;
-    display: block;
-    width: 100%;
-    border-bottom: #f5d099 1px solid;
-    background: #c8a06f;
-    top: 50%;
-    left: 0;
-    z-index: 2;
-}
+.chess {
+    min-width:760px;
+    height: 760px;
+    display: grid;
+    grid-template-columns: repeat(19, 1fr);
+    grid-template-rows: repeat(19, 1fr);
 
-.chess .cell::before {
-    content: ' ';
-    position: absolute;
-    height: 100%;
-    display: block;
-    width: 2px;
-    border-right: #f5d099 1px solid;
-    background: #c8a06f;
-    top: 0;
-    left: 50%;
-    z-index: 1;
-}
+    .cell {
 
-.chess .cell .chess1 {
-    display: block;
-    width: 30px;
-    height: 30px;
-    border-radius: 15px;
-    text-align: center;
-    line-height: 54px;
-    background: #000000;
-    left: 5px;
-    top: 5px;
-    position: absolute;
-    z-index: 10;
-    background-image: radial-gradient(#444 5%, #111 15%, #000 60%);
-    box-shadow: 0px 0px 3px #333;
-}
+        @include cell-style;
 
-.chess .cell .chess2 {
-    display: block;
-    width: 30px;
-    height: 30px;
-    border-radius: 15px;
-    text-align: center;
-    left: 5px;
-    top: 5px;
-    position: absolute;
-    z-index: 10;
-    line-height: 54px;
-    background-image: radial-gradient(#ffffff 5%, #f1f1f1 15%, #f1f1f1 60%);
-    box-shadow: 0px 0px 3px #333;
+        &::after {
+            top: 50%;
+            left: 0;
+        }
+
+        &::before {
+            top: 0;
+            left: 50%;
+        }
+    }
+
+    .cell-top {
+        @include cell-style;
+
+        &::after {
+            top: 50%;
+            left: 50%;
+        }
+
+        &::before {
+            top: 50%;
+            left: 50%;
+        }
+    }
+
+    .cell-top-right {
+        @include cell-style;
+
+        &::after {
+            top: 50%;
+            left: -50%;
+        }
+
+        &::before {
+            top: 50%;
+            left: 50%;
+        }
+    }
+
+    .cell-left {
+        @include cell-style;
+
+        &::after {
+            top: 50%;
+            left: 50%;
+        }
+
+        &::before {
+            top: 0;
+            left: 50%;
+        }
+    }
+
+    .cell-left-bottom {
+        @include cell-style;
+
+        &::after {
+            top: 50%;
+            left: 50%;
+        }
+
+        &::before {
+            top: -50%;
+            left: 50%;
+        }
+    }
+
+    .cell-right-bottom {
+        @include cell-style;
+
+        &::after {
+            top: -50%;
+            left: -50%;
+        }
+
+        &::before {
+            top: -50%;
+            left: 50%;
+        }
+    }
+
+    .cell-bottom {
+        @include cell-style;
+
+        &::after {
+            top: 50%;
+            left: 50%;
+        }
+
+        &::before {
+            top: -50%;
+            left: 50%;
+        }
+    }
+
+    .cell-right {
+        @include cell-style;
+
+        &::after {
+            top: 50%;
+            left: -50%;
+        }
+
+        &::before {
+            top: 0;
+            left: 50%;
+        }
+    }
 }
 
 .chess-info {
@@ -103,4 +181,35 @@
 .chess-msg span {
     display: block;
     font-size: 12px;
+}
+
+.chess1 {
+    display: block;
+    width: 30px;
+    height: 30px;
+    border-radius: 15px;
+    text-align: center;
+    line-height: 54px;
+    background: #000000;
+    left: 5px;
+    top: 5px;
+    position: absolute;
+    z-index: 10;
+    background-image: radial-gradient(#444 5%, #111 15%, #000 60%);
+    box-shadow: 0px 0px 3px #333;
+}
+
+.chess2 {
+    display: block;
+    width: 30px;
+    height: 30px;
+    border-radius: 15px;
+    text-align: center;
+    left: 5px;
+    top: 5px;
+    position: absolute;
+    z-index: 10;
+    line-height: 54px;
+    background-image: radial-gradient(#ffffff 5%, #f1f1f1 15%, #f1f1f1 60%);
+    box-shadow: 0px 0px 3px #333;
 }

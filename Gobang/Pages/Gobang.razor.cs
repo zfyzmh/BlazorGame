@@ -17,7 +17,7 @@ namespace Gobang.Pages
         [Parameter]
         public string RoomName { get; set; }
 
-        private string msgs;
+        private int[,] Chess { get; set; } = new int[19, 19];
 
         private string first = "He";
 
@@ -27,8 +27,7 @@ namespace Gobang.Pages
 
         private GoBangRoom? Room { get; set; }
 
-                    // 电脑落子正中心天元位置
-                    Chess[9, 9] = AIChess;
+        private string msgs;
 
         private int MineChess = 1;
 

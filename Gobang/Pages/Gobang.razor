@@ -4,37 +4,85 @@
 @inject IJSRuntime JS
 
 <div class="gobang-box">
-    <Gobang.Shared.Chessboard Chess="Chess" OnPlaying="Playing"></Gobang.Shared.Chessboard>
-</div>
-<div class="chess-info">
-    <h1>五子棋⚫⚪</h1>
-    @if (!IsInRoom)
-    {
-        <p><MudButton Variant="Variant.Outlined" Color="Color.Primary" @onclick="CreateRoom">创建房间</MudButton></p>
-        <p><MudButton Variant="Variant.Outlined" Color="Color.Primary" @onclick="GetIntoRoom">加入房间</MudButton></p>
-    }
-    else
-    {
-        <p><MudButton Variant="Variant.Outlined" Color="Color.Primary" @onclick="StartGame">@(IsInGame ? "重置游戏" : "开始游戏")</MudButton></p>
+    <div class="chess">
+        @for (var i = 0; i < 19; i++)
+        {
+            @for (var j = 0; j < 19; j++)
+            {
+                var _i = i;
+                var _j = j;
 
-        <p><MudButton Variant="Variant.Outlined" Color="Color.Primary" @onclick="Invite">邀请朋友</MudButton></p>
-    }
+                string cellClass = "cell";
 
-    <div class="chess-msg">
-        <p><b>@msgs</b></p>
-        <span>第一步,创建房间</span>
-        <span>第二步,点击邀请朋友</span>
-        <span>第三步,等朋友进入网页后点击开始游戏</span>
-        <span>第四步,落子</span>
-        <p>游戏规则：</p>
-        <span>（1）房主始终黑棋先手。</span>
-        <span>（2）点击开始游戏按钮开始对局。</span>
-        <span>（4）对局双方各执一色棋子。</span>
-        <span>（5）空棋盘开局。</span>
-        <span>（6）黑先、白后，交替下子，每次只能下一子。</span>
-        <span>（7）棋子下在棋盘的空白点上，棋子下定后，不得向其它点移动，不得从棋盘上拿掉或拿起另落别处。</span>
-        <span>（8）黑方的第一枚棋子可下在棋盘任意交叉点上。</span>
-        <span>（9）轮流下子是双方的权利，<del>但允许任何一方放弃下子权（即：PASS权）</del>。</span>
-        <span>（10）<del>五子棋对局，执行黑方指定开局、三手可交换、五手两打的规定。整个对局过程中黑方有禁手，白方无禁手。黑方禁手有三三禁手、四四禁手和长连禁手三种。</del></span>
+                if (i==0)
+                {
+                    cellClass += "-top";
+                    if (j==18)
+                    {
+                        cellClass += "-right";
+                    }
+                }else if (j==0)
+                {
+                    cellClass += "-left";
+
+                    if (i==18)
+                    {
+                        cellClass += "-bottom";
+                    }
+
+                }
+                else if (j == 18)
+                {
+                    cellClass += "-right";
+
+                    if (i==18)
+                    {
+                        cellClass += "-bottom";
+                    }
+                }
+                else if (i == 18)
+                {
+                    cellClass += "-bottom";
+                }
+
+
+
+                <div class="@cellClass" @onclick="@(async () => await Playing((_i, _j)))">
+                        <span class="chess@(Chess[i, j])"></span>
+               </div>
+            }
+        }
+    </div>
+    <div class="chess-info">
+        <h1>五子棋⚫⚪</h1>
+        @if (!IsInRoom)
+        {
+            <p><MudButton Variant="Variant.Outlined" Color="Color.Primary" @onclick="CreateRoom">创建房间</MudButton></p>
+            <p><MudButton Variant="Variant.Outlined" Color="Color.Primary" @onclick="GetIntoRoom">加入房间</MudButton></p>
+        }
+        else
+        {
+            <p><MudButton Variant="Variant.Outlined" Color="Color.Primary" @onclick="StartGame">@(IsInGame ? "重置游戏" : "开始游戏")</MudButton></p>
+
+            <p><MudButton Variant="Variant.Outlined" Color="Color.Primary" @onclick="Invite">邀请朋友</MudButton></p>
+        }
+
+        <div class="chess-msg">
+            <p><b>@msgs</b></p>
+            <span>第一步,创建房间</span>
+            <span>第二步,点击邀请朋友</span>
+            <span>第三步,等朋友进入网页后点击开始游戏</span>
+            <span>第四步,落子</span>
+            <p>游戏规则：</p>
+            <span>（1）房主始终黑棋先手。</span>
+            <span>（2）点击开始游戏按钮开始对局。</span>
+            <span>（4）对局双方各执一色棋子。</span>
+            <span>（5）空棋盘开局。</span>
+            <span>（6）黑先、白后，交替下子，每次只能下一子。</span>
+            <span>（7）棋子下在棋盘的空白点上，棋子下定后，不得向其它点移动，不得从棋盘上拿掉或拿起另落别处。</span>
+            <span>（8）黑方的第一枚棋子可下在棋盘任意交叉点上。</span>
+            <span>（9）轮流下子是双方的权利，<del>但允许任何一方放弃下子权（即：PASS权）</del>。</span>
+            <span>（10）<del>五子棋对局，执行黑方指定开局、三手可交换、五手两打的规定。整个对局过程中黑方有禁手，白方无禁手。黑方禁手有三三禁手、四四禁手和长连禁手三种。</del></span>
+        </div>
     </div>
 </div>
