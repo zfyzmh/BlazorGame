@@ -1,34 +1,34 @@
-﻿@page "/"
-@page "/{RoomName}"
+﻿@page "/gobangai"
 
 @inject IJSRuntime JS
 
 <div class="gobang-box">
-    <Gobang.Shared.Chessboard Chess="Chess" OnPlaying="Playing"></Gobang.Shared.Chessboard>
+    <div class="chess">
+        @for (var i = 0; i < 19; i++)
+        {
+            @for (var j = 0; j < 19; j++)
+            {
+                var _i = i;
+                var _j = j;
+                <div class="cell" @onclick="@(async () => await Playing(_i, _j))">
+                    <span class="chess@(Chess[i, j])"></span>
+                </div>
+            }
+        }
+    </div>
 </div>
 <div class="chess-info">
     <h1>五子棋⚫⚪</h1>
-    @if (!IsInRoom)
-    {
-        <p><MudButton Variant="Variant.Outlined" Color="Color.Primary" @onclick="CreateRoom">创建房间</MudButton></p>
-        <p><MudButton Variant="Variant.Outlined" Color="Color.Primary" @onclick="GetIntoRoom">加入房间</MudButton></p>
-    }
-    else
-    {
-        <p><MudButton Variant="Variant.Outlined" Color="Color.Primary" @onclick="StartGame">@(IsInGame ? "重置游戏" : "开始游戏")</MudButton></p>
-
-        <p><MudButton Variant="Variant.Outlined" Color="Color.Primary" @onclick="Invite">邀请朋友</MudButton></p>
-    }
-
+    <p><b>⚡是时候表演真正的技术了，快来一场人机大战吧⚡</b></p>
+    <p><label><input type="radio" name="chess" checked="checked" @onclick="@(() => first = "ai")"> 电脑先手</label></p>
+    <p><label><input type="radio" name="chess" @onclick="@(() => first = "me")"> 我先手</label></p>
+    <p><button class="box-btn" @onclick="StartGame">@(IsInGame ? "结束游戏" : "开始游戏")</button></p>
     <div class="chess-msg">
         <p><b>@msgs</b></p>
-        <span>第一步,创建房间</span>
-        <span>第二步,点击邀请朋友</span>
-        <span>第三步,等朋友进入网页后点击开始游戏</span>
-        <span>第四步,落子</span>
         <p>游戏规则：</p>
-        <span>（1）房主始终黑棋先手。</span>
+        <span>（1）请选择电脑先手还是你先手，黑棋始终先手。</span>
         <span>（2）点击开始游戏按钮开始对局。</span>
+        <span>（3）点击结束游戏按钮结束对局。</span>
         <span>（4）对局双方各执一色棋子。</span>
         <span>（5）空棋盘开局。</span>
         <span>（6）黑先、白后，交替下子，每次只能下一子。</span>

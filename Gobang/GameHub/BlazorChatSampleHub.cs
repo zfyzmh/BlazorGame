@@ -17,10 +17,10 @@ namespace Gobang
             return base.OnConnectedAsync();
         }
 
-        public override async Task OnDisconnectedAsync(Exception e)
+        public override async Task OnDisconnectedAsync(Exception? exception)
         {
-            Console.WriteLine($"Disconnected {e?.Message} {Context.ConnectionId}");
-            await base.OnDisconnectedAsync(e);
+            Console.WriteLine($"Disconnected {exception?.Message} {Context.ConnectionId}");
+            await base.OnDisconnectedAsync(exception);
         }
     }
 }

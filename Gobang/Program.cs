@@ -1,5 +1,7 @@
+using Gobang.GameHub;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Services;
 
 namespace Gobang
 {
@@ -10,10 +12,14 @@ namespace Gobang
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+
+            builder.Services.AddSignalR()
+                .AddNewtonsoftJsonProtocol();
             builder.Services.AddRazorPages();
             builder.Services.AddServerSideBlazor();
 
-            builder.WebHost.UseUrls(new[] { "http://*:5005" });
+            builder.Services.AddMudServices();
+            builder.WebHost.UseUrls("http://*:5005");
 
             var app = builder.Build();
 
@@ -30,6 +36,7 @@ namespace Gobang
             app.MapBlazorHub();
             app.MapFallbackToPage("/_Host");
             app.MapHub<BlazorChatSampleHub>(BlazorChatSampleHub.HubUrl);
+            app.MapHub<GoBangHub>(GoBangHub.HubUrl);
 
             app.Run();
         }

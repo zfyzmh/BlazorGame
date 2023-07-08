@@ -1,4 +1,4 @@
-﻿namespace Gobang
+﻿namespace Gobang.Model
 {
     public class ValuedPoint
     {
